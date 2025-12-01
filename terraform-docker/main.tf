@@ -26,3 +26,43 @@ resource "docker_container" "nginx" {
     external = 8080
   }
 }
+
+resource "docker_container" "postgres" {
+  image = "postgres:17"
+  name = "postgres"
+
+  networks_advanced {
+    name = docker_network.demo.name
+  }
+
+  env = [
+    "POSTGRES_USER=ubuntu",
+    "POSTGRES_PASSWORD=DEMO1"
+  ]
+
+  volumes {
+    container_path = "/var/lib/postgresql/data"
+  }
+}
+
+resource "docker_image" "backend-image" {
+  name = "backend-image"
+  build {
+    context = "./"
+    dockerfile = "./Dockerfile"
+  }
+}
+
+resource "docker_container" "python-backend" {
+  name = "python-backend"
+  image = docker_image.backend-image.name
+
+  networks_advanced {
+    name = docker_network.demo.name
+  }
+
+  ports {
+    internal = 5000
+    external = 5000
+  }
+}
