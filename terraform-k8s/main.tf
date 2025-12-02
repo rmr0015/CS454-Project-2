@@ -32,3 +32,20 @@ resource "helm_release" "nginx" {
   chart      = "nginx"
   namespace  = module.namespace.name
 }
+
+resource "kubernetes_service" "ClusterIP" {
+  metadata {
+    name = "ClusterIP-service"  
+}
+
+  spec {
+    selector = {
+      app = "myapp"
+    }
+    port {
+      protocol = "TCP"
+      port = 80
+      target_port = 8080
+    }
+  }
+}
