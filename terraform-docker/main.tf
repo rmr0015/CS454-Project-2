@@ -25,6 +25,11 @@ resource "docker_container" "nginx" {
     internal = 80
     external = 8080
   }
+
+  volumes {
+    host_path = "/home/ubuntu/CS454-Project-2/terraform-docker/forward-to-backend.conf"
+    container_path = "/etc/nginx/conf.d/default.conf"
+  }
 }
 
 resource "docker_container" "postgres" {
@@ -35,10 +40,7 @@ resource "docker_container" "postgres" {
     name = docker_network.demo.name
   }
 
-  env = [
-    "POSTGRES_USER=ubuntu",
-    "POSTGRES_PASSWORD=DEMO1"
-  ]
+  env = ["POSTGRES_USER=${var.USER}", "POSTGRES_PASSWORD=${var.PASS}"]
 
   volumes {
     container_path = "/var/lib/postgresql/data"
@@ -65,4 +67,11 @@ resource "docker_container" "python-backend" {
     internal = 5000
     external = 5000
   }
+ 
+  env = ["DBUSER=${var.USER}", "DBPASS=${var.PASS}", "DBNAME=${var.USER}"]
 }
+
+variable "USER" { type = string }
+variable "PASS" { type = string }
+variable "BACKPORT" { type = number }
+variable "FRONTPORT" { type = number }

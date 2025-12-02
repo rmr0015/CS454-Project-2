@@ -7,6 +7,6 @@ app = flask.Flask(__name__)
 def debugprint():
     conn = psycopg2.connect("dbname='ubuntu' user='ubuntu' host='postgres' password='DEMO1'")
     conn.close()
-    return "Test"
+    return "Frontend is forwarding traffic to the backend."
 
 app.run(host="0.0.0.0", port=5000)
